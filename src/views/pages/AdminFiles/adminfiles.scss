@@ -1,0 +1,115 @@
+.admin_files {
+
+  .fileinput {
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    .thumbnail {
+      box-shadow: none;
+    }
+  }
+
+  .upload-sections {
+    display: flex;
+    flex-direction: row;
+    &>div {
+      width: 25%;
+      margin-top: 30px;
+      display: flex;
+      justify-content: flex-start;
+    }
+
+    .submit-files {
+      display: flex;
+      justify-content: center;
+    }
+  }
+  .download-sections {
+    padding-left: 20px;
+  }
+}
+
+.upload-section-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-center;
+  width: 100%;
+  background-color: #f8f9fa;
+  padding: 0 20px 20px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  flex-wrap: wrap;
+
+  .upload-left,
+  .upload-center,
+  .upload-right {
+    margin: 10px;
+  }
+
+  .upload-left {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: center;
+    width: 280px;
+
+    .upload-info {
+      background: #ffffff;
+      padding: 15px 20px;
+      border-left: 4px solid #6f42c1;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+
+      h2 {
+        margin: 0;
+        font-size: 1.2rem;
+        color: #343a40;
+      }
+
+      p {
+        margin-top: 5px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #28a745;
+      }
+    }
+  }
+
+  .upload-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .merchant-info {
+      background: #ffffff;
+      padding: 20px 24px;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #212529;
+      width: 100%;
+      max-width: 400px;
+
+      div {
+        margin-bottom: 8px;
+
+        strong {
+          color: #6c757d;
+        }
+      }
+    }
+  }
+
+  .upload-right {
+    flex-shrink: 0;
+    margin-left: 20px;
+
+    svg {
+      height: 220px;
+      width: 220px;
+    }
+  }
+}
