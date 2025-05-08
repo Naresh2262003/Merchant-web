@@ -73,12 +73,12 @@ const routes = [
   //   layout: "/admin",
   // },
   {
-    path: "/files",
-    name: "Profile",
+    path: "/dashboard",
+    name: "Dashboard",
     rtlName: "لوحة القيادة",
     icon: "tim-icons icon-single-02",
     component: <AdminFiles />,
-    layout: "/admin",
+    layout: "/merchant",
   },
   {
     path: "/register",
@@ -95,7 +95,7 @@ const routes = [
     rtlName: "إنشاء برنامج الولاء",
     icon: "tim-icons icon-components",
     component: <LoyaltyProgramCreatePage />,
-    layout: "/admin",
+    layout: "/merchant",
   },
   {
     path: "/login",

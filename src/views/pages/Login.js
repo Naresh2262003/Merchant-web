@@ -70,7 +70,7 @@ const Login = () => {
         LocalStorageManager.setName(json.data.name);
         LocalStorageManager.setMCC(json.data.mcc);
         LocalStorageManager.setGeo(json.data.geo_id);
-        navigate("/admin/files");
+        navigate("/merchant/dashboard");
       }
     } catch (error) {
       notify("tr", error.toString());

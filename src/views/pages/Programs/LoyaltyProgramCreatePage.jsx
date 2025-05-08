@@ -84,7 +84,7 @@ const LoyaltyProgramCreatePage = () => {
             title="Campaign Created!"
             onConfirm={() => {
                 setSuccess(null);
-                navigate("/admin/files"); 
+                navigate("/merchant/dashboard"); 
             }}
         >
             Campaign created successfully.
@@ -116,7 +116,7 @@ const LoyaltyProgramCreatePage = () => {
           title="Campaign Deactivated!"
           onConfirm={() => {
             setSuccess(null);
-            navigate("/admin/files"); 
+            navigate("/merchant/dashboard"); 
             window.location.reload();
           }}
         >
@@ -149,7 +149,7 @@ const LoyaltyProgramCreatePage = () => {
           title="Terms & Conditions"
           type="warning"
           onConfirm={() => setShowAlert(false)}
-          onCancel={() => navigate("/admin/files")}
+          onCancel={() => navigate("/merchant/dashboard")}
           confirmBtnBsStyle="primary"
           cancelBtnBsStyle="danger"
           confirmBtnText="I Accept"

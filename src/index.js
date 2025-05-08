@@ -22,7 +22,7 @@ root.render(
       <Provider store={ store }>
           <Routes>
               <Route path="/auth/*" element={<AuthLayout />} />
-              <Route path="/admin/*" element={<AdminLayout />} />
+              <Route path="/merchant/*" element={<AdminLayout />} />
               <Route path="/rtl/*" element={<RTLLayout />} />
               <Route path="*" element={<Navigate to="/auth/register" replace />} />
           </Routes>
