@@ -78,7 +78,7 @@ const Register = () => {
         LocalStorageManager.setName(data.data.name);
         LocalStorageManager.setMCC(mcc);
         LocalStorageManager.setGeo(geo);
-        navigate("/admin/files");
+        navigate("/merchant/dashboard");
       }
     } catch (error) {
       notify("tr", error.toString());

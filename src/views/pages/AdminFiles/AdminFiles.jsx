@@ -15,7 +15,7 @@ const AdminFiles = () => {
     const name = LocalStorageManager.getName() || "-";
 
     const {isLoading, data:transactions, refetch} = useGetTransactionsQuery({ wallet_id: accountId });
-    const merchant_txn_headers = ["Date", "Rule ID", "From", "To", "Amount", "Reward", "P-CBDC Amount", "R-CBDC Amount"];
+    const merchant_txn_headers = [,"Date", "Transaction ID","Rule ID", "To", "Amount", "Points Isssued", "Points Redeemed", "R-CBDC Amount"];
 
     const rewardsRedeemed = useMemo(() => {
         return transactions?.transactions?.reduce((acc, txn) => {
@@ -34,7 +34,7 @@ const AdminFiles = () => {
     //     const interval = setInterval(() => {
     //         refetch();
     //     }
-    //     , 5000);
+    //     , 2000);
     //     return () => clearInterval(interval);
     // }
     // , [rewardsRedeemed]);
@@ -120,10 +120,10 @@ const AdminFiles = () => {
                                                         {reverseDate(transaction.tx_date.slice(0,10))}
                                                     </td>
                                                     <td className="text-left">
-                                                        {transaction.rule_id || "-"}
+                                                        {transaction.tx_id || "-"}
                                                     </td>
                                                     <td className="text-left">
-                                                        {transaction.from}
+                                                        {transaction.rule_id || "-"}
                                                     </td>
                                                     <td className="text-left">
                                                         {transaction.to}
