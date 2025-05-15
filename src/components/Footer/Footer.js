@@ -13,7 +13,7 @@ const Footer = (props) => {
   return (
     <footer className={"footer" + (props.default ? " footer-default" : "")}>
       <Container fluid={props.fluid ? true : false}>
-        <ul className="nav">
+        {/* <ul className="nav">
           <li className="nav-item">
             <a className="nav-link" href="https://www.xaults.com">
               Xaults
@@ -32,7 +32,7 @@ const Footer = (props) => {
               Blog
             </a>
           </li>
-        </ul>
+        </ul> */}
         <div className="copyright">
           © {new Date().getFullYear()} made with{" "}
           <i className="tim-icons icon-heart-2" /> by{" "}

@@ -1,49 +1,46 @@
-
 import React, { useState, useEffect, useRef } from "react";
-import classnames from "classnames";
 import { useNavigate, Link } from "react-router-dom";
-import { config } from "config";
 import NotificationAlert from "react-notification-alert";
+import classnames from "classnames";
+import { config } from "config";
 import LocalStorageManager from "../../utils/LocalStorageManager";
 
-// reactstrap components
 import {
   Button,
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  CardTitle,
   Form,
   Input,
-  InputGroupAddon,
-  InputGroupText,
-  InputGroup,
   Container,
+  Row,
   Col,
 } from "reactstrap";
 
 const Register = () => {
   const [state, setState] = useState({});
-  const [accountNo, setAccountNo] = useState(null);
-  const [id, setId] = useState(null);
-  const [name, setName] = useState(null);
-  const [mcc, setMcc] = useState(null);
-  const [geo, setGeo] = useState(null);
+  const [accountNo, setAccountNo] = useState("");
+  const [id, setId] = useState("");
+  const [name, setName] = useState("");
+  const [mcc, setMcc] = useState("");
+  const [geo, setGeo] = useState("");
+  const [firstName, setFirstName]= useState("");
+  const [lastname, setLastName]= useState("");
 
   const navigate = useNavigate();
   const notificationAlertRef = useRef(null);
 
   useEffect(() => {
-    document.body.classList.toggle("login-page"); // reuse login-page styling
-    return () => document.body.classList.toggle("login-page");
+    document.body.classList.add("register-page");
+    return () => document.body.classList.remove("register-page");
   }, []);
 
   const notify = (place, msg, ntype) => {
     const type = ntype === "success" ? "success" : "danger";
     const options = {
       place,
-      message: <div><b>{msg}</b> {ntype !== "success" && "- Error"}</div>,
+      message: (
+        <div>
+          <b>{msg}</b> {ntype !== "success" && "- Error"}
+        </div>
+      ),
       type,
       icon: "tim-icons icon-alert-circle-exc",
       autoDismiss: 7,
@@ -53,12 +50,13 @@ const Register = () => {
 
   const register = async () => {
     const body = {
-      name,
+      name: firstName+" "+lastname,
       account_no: accountNo,
       merchant_id: id,
       mcc,
       geo_id: geo,
     };
+
 
     try {
       const response = await fetch(`${config.api_url}/merchant/api/ReqRegisterMerchant`, {
@@ -78,6 +76,7 @@ const Register = () => {
         LocalStorageManager.setName(data.data.name);
         LocalStorageManager.setMCC(mcc);
         LocalStorageManager.setGeo(geo);
+        LocalStorageManager.setRegistered(true);
         navigate("/merchant/dashboard");
       }
     } catch (error) {
@@ -86,113 +85,97 @@ const Register = () => {
   };
 
   return (
-    <>
-      <div className="content pt-5">
-        <div className="rna-container">
-          <NotificationAlert ref={notificationAlertRef} />
-        </div>
-        <Container>
-          <Col className="ml-auto mr-auto" lg="4" md="6">
-            <Form className="form">
-              <Card className="card-login card-white">
-                <CardHeader className="text-center" style={{ paddingBottom: "0px" }}>
-                  <img
-                    alt="..."
-                    src={require("assets/img/merchant2.png")}
-                    style={{ width: "150px", position:"relative", margin: "10px 0 6px 0" }}
-                  />
-                  <CardTitle tag="h5" style={{ color: "#003149" }}>Register</CardTitle>
-                </CardHeader>
-
-                <CardBody className="pb-0">
-                  <InputGroup className={classnames({ "input-group-focus": state.nameFocus })}>
-                    <InputGroupAddon addonType="prepend">
-                      <InputGroupText><i className="tim-icons icon-single-02" /></InputGroupText>
-                    </InputGroupAddon>
+    <div className="d-flex align-items-center justify-between vh-100" style={{marginLeft:0, paddingLeft:0, backgroundColor:"#E2F0FF"}}>
+      <NotificationAlert ref={notificationAlertRef} />
+        <Container style={{width:'150%', paddingLeft:20, marginLeft:50}}>
+          <Row className="align-items-center" style={{width:'150%'}}>
+            <Col md="5" className="d-none d-md-block text-center" style={{backgroundColor:"#E2F0FF", width:'700px', minHeight:'850px'}}>
+              <img
+                src={require("assets/img/1.png")}
+                alt="illustration"
+                className="img-fluid"
+                style={{ height: "400px", marginTop:'110px'}}
+              />
+             <div>
+                <h2 style={{fontFamily: 'Poppins', fontWeight:600, width:500, marginInline:90, marginTop:30, marginBottom:15, lineHeight:'45px',}}> Track Your Payments and Rewards Seamlessly </h2>
+                <h4 style={{fontFamily: 'Poppins', fontWeight:300, width:480, marginInline:100, fontSize:17}}>Monitor every transaction and reward your customers—all in one place.</h4>
+             </div>
+            </Col>
+            <Col md="6" style={{marginLeft:120, backgroundColor:"white", paddingBlock:120}}>
+              <div className="register-box p-4 bg-white" style={{borderRadius:16, marginRight:75, marginLeft:30,  }}>
+              <div style={{marginTop: 20, marginBottom: 50,  marginInline:10, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems:'center'}}>
+              <h2 className="mb-4" style={{fontSize:50, fontFamily:'Poppins', fontWeight:600, fontStyle:'normal'}}>Sign up</h2>
+              <p className="text-muted mb-4">
+                Let’s get you all set up so you can access your merchant account.
+              </p>
+              <Form  style={{width:'90%'}}>
+                <Row>
+                  <Col md="6">
                     <Input
-                      placeholder="Full Name"
                       type="text"
-                      defaultValue={name}
-                      onChange={(e) => setName(e.target.value)}
-                      onFocus={() => setState({ ...state, nameFocus: true })}
-                      onBlur={() => setState({ ...state, nameFocus: false })}
+                      placeholder="First Name"
+                      className="form-control mb-4 py-4"
+                      value={firstName}
+                      style={{fontSize:16}}
+                      onChange={(e) => setFirstName(e.target.value)}
                     />
-                  </InputGroup>
-
-                  <InputGroup className={classnames({ "input-group-focus": state.accountNoFocus })}>
-                    <InputGroupAddon addonType="prepend">
-                      <InputGroupText><i className="tim-icons icon-bank" /></InputGroupText>
-                    </InputGroupAddon>
+                  </Col>
+                  <Col md="6">
                     <Input
-                      placeholder="Account No"
                       type="text"
-                      defaultValue={accountNo}
-                      onChange={(e) => setAccountNo(e.target.value)}
-                      onFocus={() => setState({ ...state, accountNoFocus: true })}
-                      onBlur={() => setState({ ...state, accountNoFocus: false })}
+                      placeholder="Last Name"
+                      className="form-control mb-4 py-4"
+                      style={{fontSize:16}} 
+                      value={lastname}
+                      onChange={(e) => setLastName(e.target.value)}
                     />
-                  </InputGroup>
-
-                  <InputGroup className={classnames({ "input-group-focus": state.idFocus })}>
-                    <InputGroupAddon addonType="prepend">
-                      <InputGroupText><i className="tim-icons icon-badge" /></InputGroupText>
-                    </InputGroupAddon>
-                    <Input
-                      placeholder="Merchant ID"
-                      type="text"
-                      defaultValue={id}
-                      onChange={(e) => setId(e.target.value)}
-                      onFocus={() => setState({ ...state, idFocus: true })}
-                      onBlur={() => setState({ ...state, idFocus: false })}
-                    />
-                  </InputGroup>
-
-                  <InputGroup className={classnames({ "input-group-focus": state.mccFocus })}>
-                    <InputGroupAddon addonType="prepend">
-                      <InputGroupText><i className="tim-icons icon-map-big" /></InputGroupText>
-                    </InputGroupAddon>
-                    <Input
-                      placeholder="MCC"
-                      type="text"
-                      defaultValue={mcc}
-                      onChange={(e) => setMcc(e.target.value)}
-                      onFocus={() => setState({ ...state, mccFocus: true })}
-                      onBlur={() => setState({ ...state, mccFocus: false })}
-                    />
-                  </InputGroup>
-
-                  <InputGroup className={classnames({ "input-group-focus": state.geoFocus })}>
-                    <InputGroupAddon addonType="prepend">
-                      <InputGroupText><i className="tim-icons icon-world" /></InputGroupText>
-                    </InputGroupAddon>
-                    <Input
-                      placeholder="Geo ID"
-                      type="text"
-                      defaultValue={geo}
-                      onChange={(e) => setGeo(e.target.value)}
-                      onFocus={() => setState({ ...state, geoFocus: true })}
-                      onBlur={() => setState({ ...state, geoFocus: false })}
-                    />
-                  </InputGroup>
-                </CardBody>
-
-                <CardFooter className="pt-0 pb-0">
-                  <Button className="mb-2 btn-block" color="info" onClick={register} size="lg">
-                    Register
-                  </Button>
-                  <div className="text-center mb-2">
-                      Already have an account?{" "}
-                      <Link to="/auth/login" className="text-info">
-                        Login
-                      </Link>
-                    </div>
-                </CardFooter>
-              </Card>
-            </Form>
+                  </Col>
+                </Row>
+                <Input
+                  type="Merchant ID"
+                  placeholder="Merchant ID"
+                  className="form-control mb-4 py-4"
+                  style={{fontSize:16}} 
+                  value={id}
+                  onChange={(e) => setId(e.target.value)}
+                />
+                <Input
+                  type="text"
+                  placeholder="Account Number"
+                  className="form-control mb-4 py-4"
+                  style={{fontSize:16}} 
+                  value={accountNo}
+                  onChange={(e) => setAccountNo(e.target.value)}
+                />
+                <Input
+                  type="text"
+                  placeholder="MCC"
+                  className="form-control mb-4 py-4"
+                  style={{fontSize:16}} 
+                  value={mcc}
+                  onChange={(e) => setMcc(e.target.value)}
+                />
+                <Input
+                  type="text"
+                  placeholder="Geography"
+                  className="form-control mb-4 py-4"
+                  style={{fontSize:16}} 
+                  value={geo}
+                  onChange={(e) => setGeo(e.target.value)}
+                />
+                <Button color="info" className="p-3" style={{fontSize:16}} block onClick={register}>
+                  Create account
+                </Button>
+                <div className="text-center mt-4">
+                  Already have an account? <Link to="/auth/login">Login</Link>
+                </div>
+              </Form>
+              </div>
+            </div>
           </Col>
-        </Container>
-      </div>
-    </>
+        </Row>
+      </Container>
+    </div>
   );
 };
 

@@ -29,6 +29,12 @@ const LocalStorageManager = {
     getName: () => {
         return localStorage.getItem("name");
     },
+    setRegistered: (registered) => {
+        localStorage.setItem("registered", registered);
+    },
+    getRegistered: () => {
+        return localStorage.getItem("registered");
+    }
 };
 
 export default LocalStorageManager;

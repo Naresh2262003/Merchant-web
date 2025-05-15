@@ -26,7 +26,7 @@ import {
   Modal,
 } from "reactstrap";
 
-import darkPoweredLogo from '../../assets/img/Dark_Powered_Transparent.svg';
+import darkPoweredLogo from '../../assets/img/updated_font_svg.svg';
 
 const AdminNavbar = (props) => {
   const [collapseOpen, setCollapseOpen] = React.useState(false);

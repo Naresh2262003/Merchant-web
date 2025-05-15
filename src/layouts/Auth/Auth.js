@@ -66,7 +66,7 @@ const Pages = (props) => {
   };
   return (
     <>
-      <AuthNavbar brandText={getActiveRoute(routes) + " Page"} />
+      <AuthNavbar brandText={getActiveRoute(routes) + ""} />
       <div className="wrapper wrapper-full-page">
         <div className={"full-page " + getFullPageName(routes)}>
           <Routes>

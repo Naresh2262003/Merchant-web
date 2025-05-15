@@ -6,9 +6,10 @@
 import React from "react";
 // react component used to create sweet alerts
 import ReactBSAlert from "react-bootstrap-sweetalert";
+import hourglass from '../../assets/img/hourglass.gif'
 
 // reactstrap components
-import { Button, Card, CardBody, CardText, Row, Col } from "reactstrap";
+import { Button, Card, CardBody, CardText, Row, Col , Spinner} from "reactstrap";
 
 const SweetAlert = () => {
   const [alert, setAlert] = React.useState(null);
@@ -21,6 +22,51 @@ const SweetAlert = () => {
       }
     };
   });
+  const customPendingPopup = () => {
+    setAlert(
+      <ReactBSAlert
+        style={{ display: "block", marginTop: "-100px" }}
+        // title="Welcome to the platform!"
+        onConfirm={() => hideAlert()}
+        confirmBtnBsStyle="info"
+        confirmBtnText="Start Exploring"
+        btnSize="80px"
+        customIcon={
+        <img
+          src={hourglass} // replace with the correct path or URL
+          alt="pending animation"
+          style={{ height: "100px", width: "100px" }}
+        />
+      }
+      >
+        <div style={{ textAlign: "center", marginBottom: "20px" }}>
+          <img
+            src={hourglass} 
+            alt="pending animation"
+            style={{ height: "100px", width: "100px" }}
+          />
+        </div>
+        <h2 style={{ fontWeight:600, fontSize:26, textAlign: "center", color:'#595959' }}>
+          Welcome to the platform!
+        </h2>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            fontSize: "16px",
+            marginBlock: "20px"
+
+          }}
+        >
+          <i className="fas fa-clock" style={{ color: "#FFA500", alignSelf:'self-start', marginTop:5 }}></i>
+          <span>
+            Approval Request has been sent to the bank, awaiting bank approval.
+          </span>
+        </div>
+      </ReactBSAlert>
+    );
+  };
   const basicAlert = () => {
     setAlert(
       <ReactBSAlert
@@ -332,6 +378,16 @@ const SweetAlert = () => {
                     color="info"
                     onClick={warningWithConfirmAndCancelMessage}
                   >
+                    Try me!
+                  </Button>
+                </CardBody>
+              </Card>
+            </Col>
+            <Col className="ml-auto" md="3">
+              <Card>
+                <CardBody className="text-center">
+                  <CardText>Custom Pending Popup</CardText>
+                  <Button className="btn-fill" color="info" onClick={customPendingPopup}>
                     Try me!
                   </Button>
                 </CardBody>

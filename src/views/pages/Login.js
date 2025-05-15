@@ -1,72 +1,76 @@
-
 import React, { useState, useRef } from "react";
-import { Navigate, useLocation, useNavigate , Link} from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import classnames from "classnames";
 import { config } from "config";
 import LocalStorageManager from "../../utils/LocalStorageManager";
-// reactstrap components
+
 import {
   Button,
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  CardTitle,
   Form,
   Input,
+  InputGroup,
   InputGroupAddon,
   InputGroupText,
-  InputGroup,
   Container,
+  Row,
   Col,
 } from "reactstrap";
 
 import NotificationAlert from "react-notification-alert";
 
-
-
-
 const Login = () => {
   const [state, setState] = useState({});
-  const [merchantId , setMerchantId] = useState("");
+  const [merchantId, setMerchantId] = useState("");
 
   const notificationAlertRef = useRef(null);
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    document.body.classList.toggle("login-page");
-    return function cleanup() {
-      document.body.classList.toggle("login-page");
-    };
-  });
+    document.body.classList.add("login-page");
+    return () => document.body.classList.remove("login-page");
+  }, []);
 
-  // XHR Request to send transaction to Blockchain
-  async function  login () {
+  const notify = (place, msg, ntype) => {
+    const type = ntype === "success" ? "success" : "danger";
+    const options = {
+      place,
+      message: (
+        <div>
+          <b>{msg}</b> {ntype !== "success" && "- Error"}
+        </div>
+      ),
+      type,
+      icon: "tim-icons icon-alert-circle-exc",
+      autoDismiss: 7,
+    };
+    notificationAlertRef.current.notificationAlert(options);
+  };
+
+  const login = async () => {
     console.log("Inside Login Button");
     const settings = {
-      method: 'GET',
+      method: "GET",
       headers: {
-        'Content-Type': 'application/json;charset=utf-8'
-      }
-    }
+        "Content-Type": "application/json;charset=utf-8",
+      },
+    };
 
     try {
       const response = await fetch(
-          `${config.api_url}/merchant/api/login-merchant/${merchantId}`, settings
+        `${config.api_url}/merchant/api/login-merchant/${merchantId}`,
+        settings
       );
 
       const json = await response.json();
 
       if (!response.ok) {
         console.log("Login Failed");
-        console.log("errp", json.status);
         notify("tr", json.status);
       } else {
         console.log("Login Success");
         notify("tr", "Login Success", "success");
-        console.log("Response", json);
         LocalStorageManager.setMerchantId(json.data.merchant_id);
-        LocalStorageManager.setAccountId( json.data.account_no? `${json.data.account_no}@drbob`:"");
+        LocalStorageManager.setAccountId(json.data.account_no ? `${json.data.account_no}@drbob` : "");
         LocalStorageManager.setName(json.data.name);
         LocalStorageManager.setMCC(json.data.mcc);
         LocalStorageManager.setGeo(json.data.geo_id);
@@ -75,115 +79,51 @@ const Login = () => {
     } catch (error) {
       notify("tr", error.toString());
     }
-  }
-
-  const notify = (place, msg, ntype) => {
-    var color = Math.floor(Math.random() * 5 + 1);
-    var type;
-    switch (ntype === "success" ? 2 : 3) {
-      case 1:
-        type = "primary";
-        break;
-      case 2:
-        type = "success";
-        break;
-      case 3:
-        type = "danger";
-        break;
-      case 4:
-        type = "warning";
-        break;
-      case 5:
-        type = "info";
-        break;
-      default:
-        break;
-    }
-    var options = {};
-    options = {
-      place: place,
-      message: (
-          <div>
-            <div>
-              <b>{msg}</b> {ntype === "success" ? "" : "- Error"}
-            </div>
-          </div>
-      ),
-      type: type,
-      icon: "tim-icons icon-alert-circle-exc",
-      autoDismiss: 7,
-    };
-    notificationAlertRef.current.notificationAlert(options);
   };
 
-  // if(orgName !== null && token !== null) {
-  //   return <Navigate to='/admin/loyalty' />
-  // }
-
   return (
-      <>
-        <div className="content pt-6">
-          <div className="rna-container">
-            <NotificationAlert ref={ notificationAlertRef } />
-          </div>
-
-          <Container>
-            <Col className="ml-auto mr-auto" lg="4" md="6">
-              <Form className="form">
-                <Card className="card-login card-white">
-                  <CardHeader className="text-center" style={{paddingBottom: "10px"}}>
-                    <img
-                        alt="..."
-                        src={require("assets/img/merchant2.png")}
-                        style={{width: "150px", position: "relative", margin: "14px 0 10px 0"}}
-                    />
-                    <CardTitle tag="h1" style={{color: "#003149"}}>Log in</CardTitle>
-                  </CardHeader>
-                  <CardBody className="pb-0">
-                    <InputGroup
-                        className={classnames({
-                          "input-group-focus": state.merchantIDFocus,
-                        })}
-                    >
-                      <InputGroupAddon addonType="prepend">
-                        <InputGroupText>
-                          <i className="tim-icons icon-email-85" />
-                        </InputGroupText>
-                      </InputGroupAddon>
-                      <Input
-                          placeholder="Enter Your Merchant ID"
-                          type="text"
-                          defaultValue={ merchantId }
-                          onChange={(e) => setMerchantId(e.target.value)}
-                          onFocus={(e) => setState({ ...state, merchantIDFocus: true })}
-                          onBlur={(e) => setState({ ...state, merchantIDFocus: false })}
-                      />
-                    </InputGroup>
-                  </CardBody>
-
-                  <CardFooter className="pt-0">
-                    <Button
-                        block
-                        className="mb-3"
-                        color="info"
-                        onClick={ login }
-                        size="lg"
-                    >
-                      Log In
-                    </Button>
-                    <div className="text-center">
-                      Don't have an account?{" "}
-                      <Link to="/auth/register" className="text-info">
-                        Register
-                      </Link>
-                    </div>
-                  </CardFooter>
-                </Card>
+    <div className="register-container d-flex align-items-center justify-content-center vh-100 vw-100">
+      <NotificationAlert ref={notificationAlertRef} />
+      <Container style={{width:'150%', paddingLeft:20, marginLeft:140}}>
+        <Row className="align-items-center" style={{width:'140%'}}>
+          <Col md="5" className="d-none d-md-block text-center">
+            <img
+              src={require("assets/img/login11.png")}
+              alt="illustration"
+              className="img-fluid"
+              style={{ height: "800px"}}
+            />
+          </Col>
+          <Col md="6" style={{marginLeft:120}}>
+            <div className="register-box p-4 shadow bg-white" style={{borderRadius:16, marginRight:75, marginLeft:30}}>
+              <div style={{marginTop: 20, marginBottom: 20, marginInline:10}}>
+              <h2 className="mb-4" style={{fontSize:40, fontFamily:'Poppins-Bold'}}>Log in</h2>
+              <p className="text-muted mb-4">
+                 Welcome back! Please enter your Merchant ID to access your account.
+              </p>
+              <Form>
+                <Input
+                  type="text"
+                  placeholder="Merchant ID"
+                  className="form-control mb-4"
+                  value={merchantId}
+                  onChange={(e) => setMerchantId(e.target.value)}
+                  onFocus={() => setState({ ...state, merchantIDFocus: true })}
+                  onBlur={() => setState({ ...state, merchantIDFocus: false })}
+                />
+                <Button color="primary" block onClick={login}>
+                  Log in
+                </Button>
+                <div className="text-center mt-4">
+                  Don't have an account? <Link to="/auth/register">Register</Link>
+                </div>
               </Form>
-            </Col>
-          </Container>
-        </div>
-      </>
+              </div>
+            </div>
+          </Col>
+        </Row>
+      </Container>
+    </div>
   );
 };
 

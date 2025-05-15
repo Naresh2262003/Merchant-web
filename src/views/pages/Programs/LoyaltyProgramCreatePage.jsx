@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Card, CardHeader, CardBody, CardTitle, Form, FormGroup, Label, Input, Button, Row, Col, Alert } from "reactstrap";
+import { Card, CardHeader, CardBody, CardTitle, Form, FormGroup, Label, Input, Button, Row, Col, Alert, } from "reactstrap";
 import { useCreateLoyaltyProgramMutation, useGetLoyaltyProgramsQuery, useDeactiveLoyaltyProgramMutation} from "../../../api/loyaltyApi";
 import { useNavigate } from "react-router-dom";
 import Datetime from "react-datetime";
 import SweetAlert from "react-bootstrap-sweetalert";
 import LocalStorageManager from "../../../utils/LocalStorageManager";
 import { reverseDate } from "../../../variables/utils";
+import pdf from "../../../assets/img/sample.pdf"
+import ReactBSAlert from "react-bootstrap-sweetalert";
+
 
 const initialState = {
   campaign_end_date: "",
@@ -22,6 +25,7 @@ const LoyaltyProgramCreatePage = () => {
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const [showAlert, setShowAlert] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
 
   const [merchantId, setMerchantId] = useState(LocalStorageManager.getMerchantId() || "-");
   const { isLoading: loyaltyProgramLoading , data: loyaltyProgram, refetch } = useGetLoyaltyProgramsQuery({ merchantID: merchantId });
@@ -68,6 +72,10 @@ const LoyaltyProgramCreatePage = () => {
   }
   }, [loyaltyProgramLoading, loyaltyProgram, loyaltyProgram]);
 
+  const hideAlert = () => {
+    setShowAlert(null);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSuccess("");
@@ -81,13 +89,13 @@ const LoyaltyProgramCreatePage = () => {
       setSuccess(
         <SweetAlert
             success
-            title="Campaign Created!"
+            title="Loyalty Program Created!"
             onConfirm={() => {
                 setSuccess(null);
                 navigate("/merchant/dashboard"); 
             }}
         >
-            Campaign created successfully.
+            Loyalty Program created successfully.
         </SweetAlert>
       );
     } catch (err) {
@@ -95,10 +103,10 @@ const LoyaltyProgramCreatePage = () => {
       setError(
         <SweetAlert
              danger
-             title="Campaign Not Created!"
+             title="Loyalty Program Not Created!"
              onConfirm={() => setError(null)}
          >
-             Campaign creation failed.
+             Loyalty Program creation failed.
          </SweetAlert>
       )
     }
@@ -113,27 +121,26 @@ const LoyaltyProgramCreatePage = () => {
       setSuccess(
         <SweetAlert
           success
-          title="Campaign Deactivated!"
+          title="Loyalty Program Deactivated!"
           onConfirm={() => {
             setSuccess(null);
             navigate("/merchant/dashboard"); 
             window.location.reload();
           }}
         >
-          Campaign deactivated successfully.
+          Loyalty Program deactivated successfully.
         </SweetAlert>
       );
-
       
     } catch (err) {
       setError(err?.data?.message || "Failed to deactivate loyalty program");
       setError(
         <SweetAlert
              danger
-             title="Campaign Not Deactivated!"
+             title="Loyalty Program Not Deactivated!"
              onConfirm={() => setError(null)}
          >
-             Campaign deactivation failed.
+             Loyalty Program deactivation failed.
          </SweetAlert>
       )
     }
@@ -145,40 +152,71 @@ const LoyaltyProgramCreatePage = () => {
 
     <div className="create-organization content">
       {showAlert && (
-        <SweetAlert
+        <ReactBSAlert
+          warning
+          style={{ display: "block", marginTop: "-100px" }}
           title="Terms & Conditions"
-          type="warning"
-          onConfirm={() => setShowAlert(false)}
+          onConfirm={() => {
+            if (isChecked) {
+              hideAlert()
+            }
+          }}
           onCancel={() => navigate("/merchant/dashboard")}
           confirmBtnBsStyle="primary"
           cancelBtnBsStyle="danger"
           confirmBtnText="I Accept"
           cancelBtnText="Cancel"
           showCancel
-          closeOnClickOutside={false}
+          btnSize=""
+          confirmBtnDisabled={!isChecked}
         >
-          You must accept the Terms and Conditions to create a Loyalty Program.
-        </SweetAlert>
+          <div style={{ 
+            marginTop: "10px", 
+            marginLeft: "0px", 
+            textAlign: "left", 
+            display: "flex", 
+            alignItems: "flex-start", 
+            justifyContent: "center"
+          }}>
+            <input
+              type="checkbox"
+              id="termsCheckbox"
+              checked={isChecked}
+              onChange={(e) => setIsChecked(e.target.checked)}
+              style={{ marginTop: "5px" , marginLeft:'10px'}} // optional: vertically aligns checkbox with text
+            />
+            <label htmlFor="termsCheckbox" style={{ marginLeft: "5px", flex: 1, textAlign: 'center' }}>
+              I accept the <a href={pdf} target="_blank" rel="noopener noreferrer">Terms and Conditions</a> to create a Loyalty Program.
+            </label>
+          </div>
+        </ReactBSAlert>
       )}
 
-      {success && <Alert color="success">{success}</Alert>}
-      {error && <Alert color="danger">{error}</Alert>}
+      {success}
+      {error}
     
       <Row>
         <Col>
           <Card>
-            <CardHeader>
-              <CardTitle tag="h4">{disabled ? "" : "Create"} Loyalty Program</CardTitle>
+            <CardHeader style={{ marginInline: "20px", marginTop: "10px" }}>
+              <h4 style={{ marginBlock:2, fontSize:18}}>
+                  {disabled ? "Loyalty Program" : "Create Loyalty Program"}
+              </h4>
+              { 
+                disabled && <p style={{fontSize:12}}>
+                 Status: <span style={{color:'green'}}>{loyaltyProgram?.data?.status === 'active' ? 'ACTIVE':'INACTIVE'}</span>
+                </p>
+              }
             </CardHeader>
-            <CardBody>
+            <CardBody style={{marginInline:"20px"}}>
               <Form onSubmit={disabled ? handleDeactivate : handleSubmit}>
                 <Row style={{marginTop: "20px"}}>
                   <Col md="6">
                     <FormGroup>
-                      <Label>Campaign Start Date</Label>
+                      <Label>Program Start Date</Label>
                       <Datetime
                         timeFormat={false}
-                        inputProps={{ placeholder: "Choose campaign start date", disabled }}
+                        inputProps={{ placeholder: "Choose program start date", disabled }}
                         closeOnSelect
                         value={form.campaign_start_date}
                         required
@@ -198,10 +236,10 @@ const LoyaltyProgramCreatePage = () => {
                   </Col>
                   <Col md="6">
                     <FormGroup>
-                      <Label>Campaign End Date</Label>
+                      <Label>Program End Date</Label>
                       <Datetime
                         timeFormat={false}
-                        inputProps={{ placeholder: "Choose campaign end date", disabled }}
+                        inputProps={{ placeholder: "Choose program end date", disabled }}
                         closeOnSelect
                         value={form.campaign_end_date}
                         required
@@ -224,7 +262,7 @@ const LoyaltyProgramCreatePage = () => {
                 <Row style={{marginTop: "10px"}}>
                   <Col md="6">
                     <FormGroup>
-                      <Label>Campaign Expiry Date</Label>
+                      <Label>Token Expiry Date</Label>
                       <Datetime
                         timeFormat={false}
                         inputProps={{ placeholder: "Choose token expiry date", disabled }}
@@ -247,15 +285,6 @@ const LoyaltyProgramCreatePage = () => {
                   </Col>
                   <Col md="6">
                     <FormGroup>
-                      <Label>Merchant Wallet ID</Label>
-                      <Input type="text" name="merchant_wallet_id" value={accountId} disabled />
-                    </FormGroup>
-                  </Col>
-                </Row>
-                      
-                <Row style={{marginTop: "0px"}}>
-                  <Col md="6">
-                    <FormGroup>
                       <Label>Reward Percentage</Label>
                       <Input
                         type="number"
@@ -264,18 +293,34 @@ const LoyaltyProgramCreatePage = () => {
                         onChange={handleChangereward}
                         required
                         disabled={disabled}
+                        placeholder="Reward %"
                       />
-                    </FormGroup>
-                  </Col>
-                  <Col md="6">
-                    <FormGroup>
-                      <Label>Mcc</Label>
-                      <Input type="text" value={mcc} disabled />
                     </FormGroup>
                   </Col>
                 </Row>
                       
                 <Row style={{marginTop: "0px"}}>
+                  <Col md="4">
+                    <FormGroup>
+                      <Label>Wallet ID</Label>
+                      <Input type="text" name="merchant_wallet_id" value={accountId} disabled />
+                    </FormGroup>
+                  </Col>
+                  <Col md="4">
+                    <FormGroup>
+                      <Label>MCC</Label>
+                      <Input type="text" value={mcc} disabled />
+                    </FormGroup>
+                  </Col>
+                  <Col md="4">
+                    <FormGroup>
+                      <Label>Geography</Label>
+                      <Input type="text" value={geo} disabled />
+                    </FormGroup>
+                  </Col>
+                </Row>
+                      
+                {/* <Row style={{marginTop: "0px"}}>
                   <Col md="6">
                     <FormGroup>
                       <Label>Geo_id Value</Label>
@@ -295,22 +340,22 @@ const LoyaltyProgramCreatePage = () => {
                       </FormGroup>
                     </Col>
                   )}
-                </Row>
+                </Row> */}
                 
                 <Button
-                  color="primary"
+                  color={disabled ? "danger" : "primary"}
                   type="submit"
                   disabled={isLoading || loyaltyProgram?.data?.status === "merchant under bank approval"}
                   style={{
                     marginTop: "40px",
                     // marginLeft: "1200px",
-                    marginBottom: "130px",
-                    backgroundColor: loyaltyProgram?.data?.status === "merchant under bank approval" ? "#ccc" : undefined,
+                    marginBottom: "210px",
+                    backgroundColor: loyaltyProgram?.data?.status === "merchant under bank approval" ? "red" : "red",
                     cursor: loyaltyProgram?.data?.status === "merchant under bank approval" ? "not-allowed" : "pointer",
                     opacity: loyaltyProgram?.data?.status === "merchant under bank approval" ? 0.6 : 1,
                   }}
                 >
-                  {isLoading ? "Creating..." : disabled ? "Deactivate" : "Create Program"}
+                  {isLoading ? "Creating..." : disabled ? "Deactivate Program" : "Create Program"}
                 </Button>
               </Form>
             </CardBody>
