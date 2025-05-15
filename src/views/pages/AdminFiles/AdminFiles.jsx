@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import "./adminfiles.scss"
 import SweetAlert from "react-bootstrap-sweetalert";
 import { useGetTransactionsQuery } from "../../../api/transactionApi";
+import { useGetMerchantsQuery } from "../../../api/merchantApi.js";
 import {QRCodeSVG} from 'qrcode.react';
 import LocalStorageManager from "../../../utils/LocalStorageManager.js";
 import PendingPopup from "../../../views/components/PendingPopup.js"
@@ -16,14 +17,15 @@ const AdminFiles = () => {
     const geo = LocalStorageManager.getGeo() || "-";
     const name = LocalStorageManager.getName() || "-";
     const [register, setRegistered]= useState(localStorage.getItem("registered") || '');
+    const [status, setStatus] = useState("")
 
     const [showAlert, setShowAlert]= useState(false);
 
     const {isLoading, data:transactions, refetch} = useGetTransactionsQuery({ wallet_id: accountId });
+    const { data: merchantInfo } = useGetMerchantsQuery({ merchantID :merchantId})
 
     const rewardsRedeemed = useMemo(() => {
         return transactions?.transactions?.reduce((acc, txn) => {
-            console.log("in red", txn.from);
             if( txn.to == accountId){
                 return acc + (txn.p_amount || 0);
             }
@@ -57,24 +59,32 @@ const AdminFiles = () => {
         console.log("registered", register);
         setShowAlert(true);
       }
+
+      if(merchantInfo){
+        setStatus( merchantInfo &&  merchantInfo.data && merchantInfo?.data.length > 1 && merchantInfo?.data[0]?.status);
+      }
+
       const interval = setInterval(() => {
           refetch();
-      }, 200000);
+      }, 2000);
       return () => clearInterval(interval);
     }
-    , [rewardsRedeemed]);
+    , [rewardsRedeemed, merchantInfo]);
 
     return (
         <>
-          <div className="content admin_files" >
-            { setShowAlert && <PendingPopup show={showAlert} onConfirm={() => {
-              setShowAlert(false);
-              localStorage.setItem("registered", 'false');
-              setRegistered(false);
-            }} />}
+          <div className="content admin_files" style={{margin:0, paddingInline:10}} >
+            { setShowAlert && 
+              <PendingPopup show={showAlert} onConfirm={() => {
+                setShowAlert(false);
+                localStorage.setItem("registered", 'false');
+                setRegistered(false);
+                }}
+              />
+            }
               <Row>
                   <Col xs="12">
-                      <Card style={{height:'680px'}}>
+                      <Card style={{height:'700px'}}>
                         <CardHeader>
                             <h4 style={{marginLeft:20, marginTop:20}}>
                                 Merchant Summary
@@ -117,6 +127,7 @@ const AdminFiles = () => {
                                     <div><strong style={{display:'inline-block', width: 110}}>Wallet ID:</strong> {accountId}</div>
                                     <div><strong style={{display:'inline-block', width: 110}}>MCC:</strong> {mcc}</div>
                                     <div><strong style={{display:'inline-block', width: 110}}>Geo ID:</strong> {geo}</div>
+                                    <div><strong style={{display:'inline-block', width: 110}}>Status:</strong> <span style={{paddingInline:5, paddingBlock:2, backgroundColor: status === "org_active" ? '#21bb21':'#ff6a00' , borderRadius:8, color:'#fff'}}>{status === "org_active" ? "ACTIVE":"INACTIVE"}</span></div>
                                   </div>
                                   <div className="qr-code">
                                     {accountId && <QRCodeSVG value={accountId} />}

@@ -92,7 +92,7 @@ const LoyaltyProgramCreatePage = () => {
             title="Loyalty Program Created!"
             onConfirm={() => {
                 setSuccess(null);
-                navigate("/merchant/dashboard"); 
+                navigate("/merchant/loyalty/create"); 
             }}
         >
             Loyalty Program created successfully.
@@ -150,7 +150,7 @@ const LoyaltyProgramCreatePage = () => {
 
   return (
 
-    <div className="create-organization content">
+    <div className="create-organization content" style={{margin:0, paddingInline:10}}>
       {showAlert && (
         <ReactBSAlert
           warning
@@ -162,13 +162,8 @@ const LoyaltyProgramCreatePage = () => {
             }
           }}
           onCancel={() => navigate("/merchant/dashboard")}
-          confirmBtnBsStyle="primary"
-          cancelBtnBsStyle="danger"
-          confirmBtnText="I Accept"
-          cancelBtnText="Cancel"
-          showCancel
-          btnSize=""
-          confirmBtnDisabled={!isChecked}
+          showCancel={false}
+          showConfirm={false} 
         >
           <div style={{ 
             marginTop: "10px", 
@@ -189,6 +184,27 @@ const LoyaltyProgramCreatePage = () => {
               I accept the <a href={pdf} target="_blank" rel="noopener noreferrer">Terms and Conditions</a> to create a Loyalty Program.
             </label>
           </div>
+          <div style={{ marginTop: "20px", textAlign: "center" }}>
+            
+            <button
+              className="btn btn-danger"
+              onClick={() => navigate("/merchant/dashboard")}
+              style={{ marginLeft: "8px", paddingBlock:15, paddingInline:48 }}
+            >
+              Cancel
+            </button>
+
+            <button
+              className="btn btn-primary"
+              onClick={() => {
+                if (isChecked) hideAlert();
+              }}
+              disabled={!isChecked}
+              style={{ marginLeft: "30px", paddingBlock:15, paddingInline:48 }}
+            >
+              I Accept
+            </button>
+          </div>
         </ReactBSAlert>
       )}
 
@@ -197,14 +213,14 @@ const LoyaltyProgramCreatePage = () => {
     
       <Row>
         <Col>
-          <Card>
+          <Card style={{height:'700px'}}>
             <CardHeader style={{ marginInline: "20px", marginTop: "10px" }}>
               <h4 style={{ marginBlock:2, fontSize:18}}>
                   {disabled ? "Loyalty Program" : "Create Loyalty Program"}
               </h4>
               { 
-                disabled && <p style={{fontSize:12}}>
-                 Status: <span style={{color:'green'}}>{loyaltyProgram?.data?.status === 'active' ? 'ACTIVE':'INACTIVE'}</span>
+                disabled && <p style={{fontSize:12, paddingBlock:5}}>
+                 STATUS: <span style={{color: loyaltyProgram?.data?.status === 'active' ? '#21bb21':'#ff6a00', fontWeight:600}}>{loyaltyProgram?.data?.status === 'active' ? 'ACTIVE':'INACTIVE'}</span>
                 </p>
               }
             </CardHeader>
@@ -319,28 +335,6 @@ const LoyaltyProgramCreatePage = () => {
                     </FormGroup>
                   </Col>
                 </Row>
-                      
-                {/* <Row style={{marginTop: "0px"}}>
-                  <Col md="6">
-                    <FormGroup>
-                      <Label>Geo_id Value</Label>
-                      <Input type="text" value={geo} disabled />
-                    </FormGroup>
-                  </Col>
-                      
-                  {disabled && (
-                    <Col md="6">
-                      <FormGroup>
-                        <Label>Status</Label>
-                        <Input
-                          type="text"
-                          value={loyaltyProgram?.data?.status || "INACTIVE"}
-                          disabled
-                        />
-                      </FormGroup>
-                    </Col>
-                  )}
-                </Row> */}
                 
                 <Button
                   color={disabled ? "danger" : "primary"}
@@ -348,8 +342,6 @@ const LoyaltyProgramCreatePage = () => {
                   disabled={isLoading || loyaltyProgram?.data?.status === "merchant under bank approval"}
                   style={{
                     marginTop: "40px",
-                    // marginLeft: "1200px",
-                    marginBottom: "210px",
                     backgroundColor: loyaltyProgram?.data?.status === "merchant under bank approval" ? "red" : "red",
                     cursor: loyaltyProgram?.data?.status === "merchant under bank approval" ? "not-allowed" : "pointer",
                     opacity: loyaltyProgram?.data?.status === "merchant under bank approval" ? 0.6 : 1,

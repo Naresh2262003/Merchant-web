@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import NotificationAlert from "react-notification-alert";
-import classnames from "classnames";
 import { config } from "config";
 import LocalStorageManager from "../../utils/LocalStorageManager";
 
@@ -101,12 +100,18 @@ const Register = () => {
                 <h4 style={{fontFamily: 'Poppins', fontWeight:300, width:480, marginInline:100, fontSize:17}}>Monitor every transaction and reward your customers—all in one place.</h4>
              </div>
             </Col>
+            
             <Col md="6" style={{marginLeft:120, backgroundColor:"white", paddingBlock:120}}>
+              <img 
+                src={require("assets/img/xaults_bg_black.png")}
+                alt="illustration"
+                style={{ position: 'absolute', top:30, right:10, width:'180px' }}
+              />
               <div className="register-box p-4 bg-white" style={{borderRadius:16, marginRight:75, marginLeft:30,  }}>
               <div style={{marginTop: 20, marginBottom: 50,  marginInline:10, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems:'center'}}>
               <h2 className="mb-4" style={{fontSize:50, fontFamily:'Poppins', fontWeight:600, fontStyle:'normal'}}>Sign up</h2>
               <p className="text-muted mb-4">
-                Let’s get you all set up so you can access your merchant account.
+                Let’s get you all set up so you can create your merchant account.
               </p>
               <Form  style={{width:'90%'}}>
                 <Row>

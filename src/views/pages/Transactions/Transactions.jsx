@@ -2,12 +2,12 @@ import {Row, Col, Card, CardHeader, CardTitle, CardBody, Table, FormGroup, Input
 import { useGetTransactionsQuery } from "../../../api/transactionApi";
 import LocalStorageManager from "../../../utils/LocalStorageManager.js";
 import LongHash from "../../../views/components/LongHash/LongHash";
+import { useEffect } from "react";
 
 const Transactions = () => {
 
     const accountId = LocalStorageManager.getAccountId() || "-";
     const {isLoading, data:transactions, refetch} = useGetTransactionsQuery({ wallet_id: accountId });
-    const merchant_txn_headers = [,"Timestamp", "Transaction ID","Rule ID", "Sender", "Tx Amount", "Points Isssued", "Points Redeemed", "R-CBDC Amount"];
 
     function toHumanReadable(isoString){
       const date = new Date(isoString);
@@ -28,21 +28,21 @@ const Transactions = () => {
       return `${partMap.day} ${partMap.month} ${partMap.year}, ${partMap.hour}:${partMap.minute} ${partMap.dayPeriod}`;
     }
 
-    // useEffect(() => { 
-    //     const interval = setInterval(() => {
-    //         refetch();
-    //     }
-    //     , 2000);
-    //     return () => clearInterval(interval);
-    // }
-    // , [transactions]);
+    useEffect(() => { 
+        const interval = setInterval(() => {
+            refetch();
+        }
+        , 2000);
+        return () => clearInterval(interval);
+    }
+    , [transactions]);
 
     return (
         <>
-            <div className="content transaction_list">
+            <div className="content transaction_list"  style={{margin:0, paddingInline:10}} >
                 <Row>
                     <Col xs="12">
-                        <Card>
+                        <Card style={{height:700}}>
                             <CardHeader>
                                 <h4 style={{marginInline:20, marginTop:10}}>
                                     All Transactions

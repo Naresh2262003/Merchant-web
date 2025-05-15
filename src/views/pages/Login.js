@@ -8,9 +8,6 @@ import {
   Button,
   Form,
   Input,
-  InputGroup,
-  InputGroupAddon,
-  InputGroupText,
   Container,
   Row,
   Col,
@@ -47,7 +44,6 @@ const Login = () => {
   };
 
   const login = async () => {
-    console.log("Inside Login Button");
     const settings = {
       method: "GET",
       headers: {
@@ -64,10 +60,8 @@ const Login = () => {
       const json = await response.json();
 
       if (!response.ok) {
-        console.log("Login Failed");
         notify("tr", json.status);
       } else {
-        console.log("Login Success");
         notify("tr", "Login Success", "success");
         LocalStorageManager.setMerchantId(json.data.merchant_id);
         LocalStorageManager.setAccountId(json.data.account_no ? `${json.data.account_no}@drbob` : "");
@@ -82,42 +76,73 @@ const Login = () => {
   };
 
   return (
-    <div className="register-container d-flex align-items-center justify-content-center vh-100 vw-100">
+    <div className="d-flex align-items-center justify-between vh-100" style={{ marginLeft: 0, paddingLeft: 0, backgroundColor: "#E2F0FF" }}>
       <NotificationAlert ref={notificationAlertRef} />
-      <Container style={{width:'150%', paddingLeft:20, marginLeft:140}}>
-        <Row className="align-items-center" style={{width:'140%'}}>
-          <Col md="5" className="d-none d-md-block text-center">
+      <Container style={{ width: '150%', paddingLeft: 20, marginLeft: 50 }}>
+        <Row className="align-items-center" style={{ width: '150%' }}>
+          {/* Left Side - Image & Message (70%) */}
+          <Col md="6" className="d-none d-md-block text-center" style={{ backgroundColor: "#E2F0FF", width: '700px', minHeight: '850px' }}>
             <img
-              src={require("assets/img/login11.png")}
+              src={require("assets/img/1.png")}
               alt="illustration"
               className="img-fluid"
-              style={{ height: "800px"}}
+              style={{ height: "400px", marginTop: '110px' }}
             />
+            <div>
+              <h2 style={{
+                fontFamily: 'Poppins',
+                fontWeight: 600,
+                width: 600,
+                marginInline: 100,
+                marginTop: 30,
+                marginBottom: 15,
+                lineHeight: '45px'
+              }}>
+                Reconnect with Your Merchant Dashboard
+              </h2>
+              <h4 style={{
+                fontFamily: 'Poppins',
+                fontWeight: 300,
+                width:600,
+                marginInline: 100,
+                fontSize: 17
+              }}>
+                Access your account to track transactions and manage customer rewards with ease.
+              </h4>
+            </div>
           </Col>
-          <Col md="6" style={{marginLeft:120}}>
-            <div className="register-box p-4 shadow bg-white" style={{borderRadius:16, marginRight:75, marginLeft:30}}>
-              <div style={{marginTop: 20, marginBottom: 20, marginInline:10}}>
-              <h2 className="mb-4" style={{fontSize:40, fontFamily:'Poppins-Bold'}}>Log in</h2>
-              <p className="text-muted mb-4">
-                 Welcome back! Please enter your Merchant ID to access your account.
-              </p>
-              <Form>
-                <Input
-                  type="text"
-                  placeholder="Merchant ID"
-                  className="form-control mb-4"
-                  value={merchantId}
-                  onChange={(e) => setMerchantId(e.target.value)}
-                  onFocus={() => setState({ ...state, merchantIDFocus: true })}
-                  onBlur={() => setState({ ...state, merchantIDFocus: false })}
-                />
-                <Button color="primary" block onClick={login}>
-                  Log in
-                </Button>
-                <div className="text-center mt-4">
-                  Don't have an account? <Link to="/auth/register">Register</Link>
-                </div>
-              </Form>
+
+          {/* Right Side - Login Form (30%) */}
+          <Col md="5" style={{ marginLeft: 120, backgroundColor: "white", paddingBlock: 200 }}>
+            <img 
+              src={require("assets/img/xaults_bg_black.png")}
+              alt="illustration"
+              style={{ position: 'absolute', top:-40, right:10, width:'180px' }}
+            />
+            <div className="register-box p-4 bg-white" style={{ borderRadius: 16, marginRight: 75, marginLeft: 30 }}>
+              <div style={{ marginTop: 20, marginBottom: 50, marginInline: 10, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                <h2 className="mb-4" style={{ fontSize: 46, fontFamily: 'Poppins', fontWeight: 600 }}>Welcome back!</h2>
+                <p className="text-muted mb-4" style={{ width: '90%' , textAlign:'center'}}>
+                  Please enter your Merchant ID to access your account.
+                </p>
+                <Form style={{ width: '90%' }}>
+                  <Input
+                    type="text"
+                    placeholder="Merchant ID"
+                    className="form-control mb-4 py-4"
+                    value={merchantId}
+                    onChange={(e) => setMerchantId(e.target.value)}
+                    onFocus={() => setState({ ...state, merchantIDFocus: true })}
+                    onBlur={() => setState({ ...state, merchantIDFocus: false })}
+                    style={{ fontSize: 16 }}
+                  />
+                  <Button color="info" className="p-3" style={{ fontSize: 16 }} block onClick={login}>
+                    Log in
+                  </Button>
+                  <div className="text-center mt-4">
+                    Don't have an account? <Link to="/auth/register">Sign up</Link>
+                  </div>
+                </Form>
               </div>
             </div>
           </Col>

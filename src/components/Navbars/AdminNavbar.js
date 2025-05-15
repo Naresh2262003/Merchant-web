@@ -3,10 +3,11 @@
 * Xaults Dashboard PRO
 =========================================================
 */
-import React from "react";
+import React , {useState} from "react";
 // nodejs library that concatenates classes
 import classNames from "classnames";
 import {Navigate} from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 // reactstrap components
 import {
@@ -27,6 +28,7 @@ import {
 } from "reactstrap";
 
 import darkPoweredLogo from '../../assets/img/updated_font_svg.svg';
+import xaults from '../../assets/img/xaults_bg.png';
 
 const AdminNavbar = (props) => {
   const [collapseOpen, setCollapseOpen] = React.useState(false);
@@ -34,12 +36,18 @@ const AdminNavbar = (props) => {
   const [color, setColor] = React.useState("navbar-transparent");
   const [loginRedirect, setLoginRedirectState] = React.useState(false);
 
+  const navigate= useNavigate();
+  const location = useLocation();
+
+  const [currLoc, setCurrLoc] = useState(location.pathname || "/")
+
   React.useEffect(() => {
     window.addEventListener("resize", updateColor);
+    setCurrLoc(location.pathname);
     return function cleanup() {
       window.removeEventListener("resize", updateColor);
     };
-  });
+  }, [location.pathname]);
   // function that adds color white/transparent to the navbar on resize (this is for the collapse)
   const updateColor = () => {
     if (window.innerWidth < 993 && collapseOpen) {
@@ -83,6 +91,7 @@ const AdminNavbar = (props) => {
           [color]: props.location?.pathname?.indexOf("full-screen-map") === -1,
         })}
         expand="lg"
+        style={{backgroundColor:"#7152F3"}}
       >
         <Container fluid>
           <div className="navbar-wrapper">
@@ -93,8 +102,6 @@ const AdminNavbar = (props) => {
                 id="tooltip209599"
                 onClick={props.handleMiniClick}
               >
-                <i className="tim-icons icon-align-center visible-on-sidebar-regular" />
-                <i className="tim-icons icon-bullet-list-67 visible-on-sidebar-mini" />
               </Button>
             </div>
             <div
@@ -131,29 +138,12 @@ const AdminNavbar = (props) => {
           </button>
           <Collapse navbar isOpen={collapseOpen}>
             <Nav className="ml-auto" navbar>
-              {/* <InputGroup className="search-bar" tag="li">
-                <Button
-                  color="link"
-                  data-target="#searchModal"
-                  data-toggle="modal"
-                  id="search-button"
-                  onClick={toggleModalSearch}
-                >
-                  <i className="tim-icons icon-zoom-split" />
-                  <span className="d-lg-none d-md-block">Search</span>
-                </Button>
-              </InputGroup> */}
+                <img 
+                  src={xaults} 
+                  alt="Logo" 
+                  style={{ position:'absolute',top:-65, left:10, width:190, cursor:'pointer'}} 
+                />
               <UncontrolledDropdown nav>
-                {/* <DropdownToggle
-                  caret
-                  color="default"
-                  data-toggle="dropdown"
-                  nav
-                >
-                  <div className="notification d-none d-lg-block d-xl-block" />
-                  <i className="tim-icons icon-sound-wave" />
-                  <p className="d-lg-none">Notifications</p>
-                </DropdownToggle> */}
                 <DropdownMenu className="dropdown-navbar" right tag="ul">
                   <NavLink tag="li">
                     <DropdownItem className="nav-item">
@@ -188,14 +178,45 @@ const AdminNavbar = (props) => {
                   color="default"
                   data-toggle="dropdown"
                   nav
-                  onClick={(e) => e.preventDefault()}
+                  onClick={() => {
+                    setCurrLoc('/merchant/dashboard')
+                    navigate('/merchant/dashboard')
+                  }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', marginRight: '10px' }}>
-                    <img 
-                      src={darkPoweredLogo} 
-                      alt="Logo" 
-                      style={{ width: '150px', height: '30px' }} 
-                    />
+                  <div style={{ display: 'flex', alignItems: 'center', marginRight: '5px', backgroundColor: currLoc==='/merchant/dashboard'  ? 'white':"", borderRadius:10, paddingInline:8, paddingBlock:2 }}>
+                    <h3 style={{margin:0, padding:0, color:  currLoc==='/merchant/dashboard' ? "#7152F3": "#fff", fontSize:18, fontWeight:600, fontFamily:'Nunito', marginTop:5}}>Dashboard</h3>
+                  </div>
+                </DropdownToggle>
+              </UncontrolledDropdown>
+              <UncontrolledDropdown nav>
+                <DropdownToggle
+                  caret
+                  color="default"
+                  data-toggle="dropdown"
+                  nav
+                  onClick={() => {
+                    setCurrLoc('/merchant/loyalty/create')
+                    navigate('/merchant/loyalty/create')
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center' , backgroundColor: currLoc==='/merchant/loyalty/create'  ? 'white':"", borderRadius:10, paddingInline:8, paddingBlock:2 }}>
+                    <h3 style={{margin:0, padding:0, color:  currLoc==='/merchant/loyalty/create' ? "#7152F3": "#fff", fontSize:18, fontWeight:600, fontFamily:'Nunito',  marginTop:5}}>Loyalty Program</h3>
+                  </div>
+                </DropdownToggle>
+              </UncontrolledDropdown>
+              <UncontrolledDropdown nav>
+                <DropdownToggle
+                  caret
+                  color="default"
+                  data-toggle="dropdown"
+                  nav
+                  onClick={() => {
+                    setCurrLoc('/merchant/transactions')
+                    navigate('/merchant/transactions')
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', marginRight: '40px' , backgroundColor: currLoc==='/merchant/transactions'  ? 'white':"", borderRadius:10, paddingInline:8, paddingBlock:2 }}>
+                    <h3 style={{margin:0, padding:0, color:  currLoc==='/merchant/transactions' ? "#7152F3": "#fff", fontSize:18, fontWeight:600, fontFamily:'Nunito',  marginTop:5}}>Transactions</h3>
                   </div>
                 </DropdownToggle>
               </UncontrolledDropdown>
@@ -214,19 +235,12 @@ const AdminNavbar = (props) => {
                   <p className="d-lg-none">Log out</p>
                 </DropdownToggle>
                 <DropdownMenu className="dropdown-navbar" right tag="ul">
-                  {/*<NavLink tag="li">*/}
-                  {/*  <DropdownItem className="nav-item">Profile</DropdownItem>*/}
-                  {/*</NavLink>*/}
-                  {/*<NavLink tag="li">*/}
-                  {/*  <DropdownItem className="nav-item">Settings</DropdownItem>*/}
-                  {/*</NavLink>*/}
-                  {/*<DropdownItem divider tag="li" />*/}
                   <NavLink tag="li">
                     <DropdownItem className="nav-item" onClick={ logOut }>Log out</DropdownItem>
                   </NavLink>
                 </DropdownMenu>
               </UncontrolledDropdown>
-              <li className="separator d-lg-none" />
+              <li className="separator d-lg-none" /> 
             </Nav>
           </Collapse>
         </Container>
