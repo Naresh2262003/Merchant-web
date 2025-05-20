@@ -8,6 +8,7 @@ import LocalStorageManager from "../../../utils/LocalStorageManager";
 import { reverseDate } from "../../../variables/utils";
 import pdf from "../../../assets/img/sample.pdf"
 import ReactBSAlert from "react-bootstrap-sweetalert";
+import LongHash from "../../../views/components/LongHash/LongHash";
 
 
 const initialState = {
@@ -21,17 +22,18 @@ const initialState = {
 
 const LoyaltyProgramCreatePage = () => {
   const [createLoyaltyProgram, { isLoading }] = useCreateLoyaltyProgramMutation();
-  const [deactiveLoyaltyProgram] = useDeactiveLoyaltyProgramMutation();
+  const [deactiveLoyaltyProgram, { isLoading : deactivateLoading }] = useDeactiveLoyaltyProgramMutation();
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+  const [isPressed, setIsPressed] = useState(false);
 
   const [merchantId, setMerchantId] = useState(LocalStorageManager.getMerchantId() || "-");
   const { isLoading: loyaltyProgramLoading , data: loyaltyProgram, refetch } = useGetLoyaltyProgramsQuery({ merchantID: merchantId });
   const mcc = LocalStorageManager.getMCC() || "-";
   const geo = LocalStorageManager.getGeo() || "-";
-  const accountId = LocalStorageManager.getAccountId() || "-";
+  const WalletID = LocalStorageManager.getWalletID() || "-";
   
   const [form, setForm] = useState({
     campaign_end_date: "",
@@ -39,16 +41,28 @@ const LoyaltyProgramCreatePage = () => {
     expiry: "",
     geo_id: geo,
     mcc: mcc,
-    merchant_wallet_id: accountId,
+    merchant_wallet_id: WalletID,
     loyalty_reward_percentage: "",
   });
 
   const [disabled, setDisabled] = useState(false); 
   const navigate = useNavigate();
 
+  // const handleChangereward = (e) => {
+  //   const  value = e.target.value;
+  //   setForm((prev) => ({ ...prev, "loyalty_reward_percentage": value }));
+  // };
+
   const handleChangereward = (e) => {
-    const  value = e.target.value;
-    setForm((prev) => ({ ...prev, "loyalty_reward_percentage":  Number(value) }));
+    const inputValue = e.target.value;
+    
+    // Remove the '%' if the user somehow adds it
+    const numericOnly = inputValue.replace(/[^\d]/g, "");
+    
+    setForm((prev) => ({
+      ...prev,
+      loyalty_reward_percentage: numericOnly === "" ? "" : Number(numericOnly),
+    }));
   };
 
   useEffect(() => {
@@ -82,7 +96,9 @@ const LoyaltyProgramCreatePage = () => {
     setError("");
     console.log("form", form);
     try {
-      await createLoyaltyProgram({form, merchantId}).unwrap();
+      const response = await createLoyaltyProgram({form, merchantId}).unwrap();
+      const loyaltyProgramID= response.data.loyalty_program_id;
+      console.log("loyalty Program id", loyaltyProgramID)
       setForm(initialState);
       await refetch(); 
         
@@ -90,12 +106,23 @@ const LoyaltyProgramCreatePage = () => {
         <SweetAlert
             success
             title="Loyalty Program Created!"
-            onConfirm={() => {
-                setSuccess(null);
-                navigate("/merchant/loyalty/create"); 
-            }}
+            showCancel={false}
+            showConfirm={false} 
         >
-            Loyalty Program created successfully.
+            id: {loyaltyProgramID}A
+            {/* id: <LongHash hash={loyaltyProgramID} /> */}
+            
+            <div style={{ marginTop: "30px", textAlign: "center" }}>  
+              <button
+                onClick={() => {
+                  setSuccess(null);
+                  navigate("/merchant/loyalty/create"); 
+                }}
+                style={{ paddingBlock:15, paddingInline:48 , backgroundColor:"#5732BF", boxShadow:'0 4px 6px rgba(50, 50, 93, 0.31)', color:"#fff", border:"none", fontFamily:"Poppins", fontWeight:500, fontSize:14, borderRadius:12}}
+              >
+                OK
+              </button>
+            </div>
         </SweetAlert>
       );
     } catch (err) {
@@ -104,9 +131,20 @@ const LoyaltyProgramCreatePage = () => {
         <SweetAlert
              danger
              title="Loyalty Program Not Created!"
-             onConfirm={() => setError(null)}
+             showCancel={false}
+             showConfirm={false} 
          >
              Loyalty Program creation failed.
+             <div style={{ marginTop: "30px", textAlign: "center" }}>  
+                <button
+                  onClick={() => {
+                    setError(null)
+                  }}
+                  style={{ paddingBlock:15, paddingInline:48 , backgroundColor:"#5732BF", boxShadow:'0 4px 6px rgba(50, 50, 93, 0.31)', color:"#fff", border:"none", fontFamily:"Poppins", fontWeight:500, fontSize:14, borderRadius:12}}
+                >
+                  OK
+                </button>
+              </div>
          </SweetAlert>
       )
     }
@@ -115,20 +153,30 @@ const LoyaltyProgramCreatePage = () => {
   const handleDeactivate = async (e) => {
     e.preventDefault();
     try {
-      await deactiveLoyaltyProgram({ merchantId }).unwrap();
+      const response= await deactiveLoyaltyProgram({ merchantId }).unwrap();
+      const loyaltyProgramID= response.data.loyalty_program_id;
       setForm(initialState);
 
       setSuccess(
         <SweetAlert
           success
           title="Loyalty Program Deactivated!"
-          onConfirm={() => {
-            setSuccess(null);
-            navigate("/merchant/dashboard"); 
-            window.location.reload();
-          }}
+          showConfirm={false} 
+          showCancel={false}
         >
-          Loyalty Program deactivated successfully.
+          id: {loyaltyProgramID}
+          <div style={{ marginTop: "30px", textAlign: "center" }}>  
+            <button
+              onClick={() => {
+                setSuccess(null);
+                navigate("/merchant/dashboard"); 
+                window.location.reload();
+              }}
+              style={{ paddingBlock:15, paddingInline:48 , backgroundColor:"#5732BF", boxShadow:'0 4px 6px rgba(50, 50, 93, 0.31)', color:"#fff", border:"none", fontFamily:"Poppins", fontWeight:500, fontSize:14, borderRadius:12}}
+            >
+              OK
+            </button>
+          </div>
         </SweetAlert>
       );
       
@@ -138,20 +186,29 @@ const LoyaltyProgramCreatePage = () => {
         <SweetAlert
              danger
              title="Loyalty Program Not Deactivated!"
-             onConfirm={() => setError(null)}
+             showCancel={false}
+             showConfirm={false} 
          >
              Loyalty Program deactivation failed.
+             <div style={{ marginTop: "30px", textAlign: "center" }}>  
+                <button
+                  onClick={() => {
+                    setError(null)
+                  }}
+                  style={{ paddingBlock:15, paddingInline:48 , backgroundColor:"#5732BF", boxShadow:'0 4px 6px rgba(50, 50, 93, 0.31)', color:"#fff", border:"none", fontFamily:"Poppins", fontWeight:500, fontSize:14, borderRadius:12}}
+                >
+                  OK
+                </button>
+              </div>
          </SweetAlert>
       )
     }
   }
 
-
-
   return (
 
-    <div className="create-organization content" style={{margin:0, paddingInline:10}}>
-      {showAlert && (
+    <div className="create-organization content" style={{margin:0, paddingInline:0, paddingBlock:70, height:800, overflow:'hidden', backgroundColor:"#fff"}}>
+      {/* {showAlert && (
         <ReactBSAlert
           warning
           style={{ display: "block", marginTop: "-100px" }}
@@ -206,26 +263,26 @@ const LoyaltyProgramCreatePage = () => {
             </button>
           </div>
         </ReactBSAlert>
-      )}
+      )} */}
 
       {success}
       {error}
     
       <Row>
-        <Col>
-          <Card style={{height:'700px'}}>
-            <CardHeader style={{ marginInline: "20px", marginTop: "10px" }}>
+        <Col style={{paddingRight:10}} >
+          <Card style={{height:500, width: 800, boxShadow:' 0 4px 10px rgba(0, 0, 0, 0.1)', marginInline:450, display: 'flex', flexDirection: 'column', justifyContent:'center', marginBlock:50}}>
+            <CardHeader style={{ marginInline: "20px", paddingTop:30 }}>
               <h4 style={{ marginBlock:2, fontSize:18}}>
                   {disabled ? "Loyalty Program" : "Create Loyalty Program"}
               </h4>
               { 
-                disabled && <p style={{fontSize:12, paddingBlock:5}}>
+                disabled && <p style={{fontSize:12, paddingTop:5}}>
                  STATUS: <span style={{color: loyaltyProgram?.data?.status === 'active' ? '#21bb21':'#ff6a00', fontWeight:600}}>{loyaltyProgram?.data?.status === 'active' ? 'ACTIVE':'INACTIVE'}</span>
                 </p>
               }
             </CardHeader>
-            <CardBody style={{marginInline:"20px"}}>
-              <Form onSubmit={disabled ? handleDeactivate : handleSubmit}>
+            <CardBody style={{marginInline:"20px", marginBlock:0,paddingBottom:0}}>
+              <Form onSubmit={disabled ? handleDeactivate : handleSubmit} style={{marginBottom:0, paddingBottom:0}}>
                 <Row style={{marginTop: "20px"}}>
                   <Col md="6">
                     <FormGroup>
@@ -303,9 +360,13 @@ const LoyaltyProgramCreatePage = () => {
                     <FormGroup>
                       <Label>Reward Percentage</Label>
                       <Input
-                        type="number"
-                        name="loyalty_reward_percentage"
-                        value={form.loyalty_reward_percentage}
+                        type="text"
+                        name="loyalty_reward_percentage" 
+                        value={
+                          form.loyalty_reward_percentage !== "" && form.loyalty_reward_percentage !== undefined
+                            ? `${form.loyalty_reward_percentage}%`
+                            : ""
+                        }
                         onChange={handleChangereward}
                         required
                         disabled={disabled}
@@ -319,7 +380,7 @@ const LoyaltyProgramCreatePage = () => {
                   <Col md="4">
                     <FormGroup>
                       <Label>Wallet ID</Label>
-                      <Input type="text" name="merchant_wallet_id" value={accountId} disabled />
+                      <Input type="text" name="merchant_wallet_id" value={WalletID} disabled />
                     </FormGroup>
                   </Col>
                   <Col md="4">
@@ -335,20 +396,93 @@ const LoyaltyProgramCreatePage = () => {
                     </FormGroup>
                   </Col>
                 </Row>
+                { !disabled && <Row>
+                  <Col md="8">
+                    <div style={{ 
+                      marginTop: "10px", 
+                      marginLeft: "0px", 
+                      textAlign: "left", 
+                      display: "flex", 
+                      alignItems: "center", 
+                      justifyContent: "center"
+                    }}>
+                      <input
+                        type="checkbox"
+                        id="termsCheckbox"
+                        checked={isChecked}
+                        onChange={(e) => setIsChecked(e.target.checked)}
+                      />
+                      <label htmlFor="termsCheckbox" style={{ marginLeft: "10px", flex: 1 , marginTop:7}}>
+                        I accept the <a href={pdf} target="_blank" rel="noopener noreferrer" style={{color:"#5732BF"}} >Terms and Conditions</a> to create a Loyalty Program.
+                      </label>
+                    </div>
+                  </Col>
+                </Row>}
                 
-                <Button
+                {/* <Button
                   color={disabled ? "danger" : "primary"}
                   type="submit"
-                  disabled={isLoading || loyaltyProgram?.data?.status === "merchant under bank approval"}
+                  disabled={isLoading || loyaltyProgram?.data?.status === "merchant under bank approval" || (!isChecked  && !disabled)}
                   style={{
-                    marginTop: "40px",
+                    marginTop: disabled ? "40px":"30px",
                     backgroundColor: loyaltyProgram?.data?.status === "merchant under bank approval" ? "red" : "red",
                     cursor: loyaltyProgram?.data?.status === "merchant under bank approval" ? "not-allowed" : "pointer",
-                    opacity: loyaltyProgram?.data?.status === "merchant under bank approval" ? 0.6 : 1,
+                    opacity: loyaltyProgram?.data?.status === "merchant under bank approval" || (!isChecked && !disabled) ? 0.6 : 1,
                   }}
                 >
                   {isLoading ? "Creating..." : disabled ? "Deactivate Program" : "Create Program"}
-                </Button>
+                </Button> */}
+                {disabled ? (
+                  <Button
+                    color="danger"
+                    type="submit"
+                    disabled={
+                      deactivateLoading || loyaltyProgram?.data?.status === "merchant under bank approval"
+                    }
+                    style={{
+                      marginTop: "40px",
+                      backgroundColor: "red",
+                      cursor: loyaltyProgram?.data?.status === "merchant under bank approval" ? "not-allowed" : "pointer",
+                      opacity: loyaltyProgram?.data?.status === "merchant under bank approval" ? 0.6 : 1,
+                    }}
+                  >
+                    {deactivateLoading ? "Processing..." : "Deactivate Program"}
+                  </Button>
+                ) : (
+                  <button
+                    type="submit"
+                    disabled={isLoading || !isChecked}
+                    style={{
+                      fontSize: 14,
+                      backgroundColor: "#5732BF",
+                      width: "30%",
+                      border: "none",
+                      color: "white",
+                      paddingBlock: 10,
+                      borderRadius: 7,
+                      fontWeight: 600,
+                      marginTop: 30,
+                      cursor: !isChecked ? "not-allowed" : "pointer",
+                      opacity: !isChecked ? 0.6 : 1,
+                      boxShadow:'0 4px 6px rgba(50, 50, 93, 0.31)',
+                      transition: "all 0.1s ease",
+                      transform: isPressed ? "translateY(2px)" : "translateY(0px)",
+                    }} 
+                    
+                    onMouseDown={() => setIsPressed(true)}
+                    onMouseUp={() => setIsPressed(false)}
+                    onMouseLeave={() => setIsPressed(false)} 
+                    
+                    onMouseOver={(e) => {
+                      if(isChecked){
+                        e.currentTarget.style.backgroundColor = "#4522a6"
+                      }
+                    }}
+                    onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#5732BF")}
+                  >
+                    {isLoading ? "Creating..." : "Create Program"}
+                  </button>
+                )}
               </Form>
             </CardBody>
           </Card>

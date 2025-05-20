@@ -6,8 +6,8 @@ import { useEffect } from "react";
 
 const Transactions = () => {
 
-    const accountId = LocalStorageManager.getAccountId() || "-";
-    const {isLoading, data:transactions, refetch} = useGetTransactionsQuery({ wallet_id: accountId });
+    const WalletID = LocalStorageManager.getWalletID() || "-";
+    const {isLoading, data:transactions, refetch} = useGetTransactionsQuery({ wallet_id: WalletID });
 
     function toHumanReadable(isoString){
       const date = new Date(isoString);
@@ -39,26 +39,28 @@ const Transactions = () => {
 
     return (
         <>
-            <div className="content transaction_list"  style={{margin:0, paddingInline:10}} >
-                <Row>
+            <div className="content transaction_list"  style={{margin:0, paddingInline:0, paddingTop:70, overflowX:'hidden', overflowY:'auto', backgroundColor:"#fff", height:806 ,
+            // scrollbarWidth: 'none'
+            }} >
+                <Row  style={{marginInline:100}}>
                     <Col xs="12">
-                        <Card style={{height:700}}>
+                        <Card>
                             <CardHeader>
                                 <h4 style={{marginInline:20, marginTop:10}}>
                                     All Transactions
                                 </h4>
                             </CardHeader>
                             <CardBody style={{marginLeft:20, marginTop:20}}>
-                                <Table responsive className="list-table">
-                                    <thead className="text-primary">
+                                <Table className="list-table">
+                                    <thead className="text-primary" >
                                       {/* Main Header Row */}
                                       <tr>
                                         <th rowSpan="2" className="text-left">Timestamp</th>
                                         <th rowSpan="2" className="text-left">Transaction ID</th>
                                         <th rowSpan="2" className="text-left">Rule ID</th>
                                         <th rowSpan="2" className="text-left">Sender</th>
-                                        <th rowSpan="2" className="text-left">Points Issued</th>
                                         <th className="text-left">Tx Amount</th>
+                                        <th rowSpan="2" className="text-left">Points Issued</th>
                                         <th className="text-left">Points Redeemed</th>
                                         <th className="text-left">R-CBDC Amount</th>
                                       </tr>
@@ -74,18 +76,18 @@ const Transactions = () => {
                                       {
                                         transactions?.transactions?.length > 0 &&
                                         transactions.transactions.map((transaction, index) => (
-                                          transaction.to === accountId && (
+                                          transaction.to === WalletID && (
                                             <tr key={index}>
                                               <td className="text-left">{toHumanReadable(transaction.tx_date)}</td>
                                               <td className="text-left">
                                                 <LongHash hash={transaction.tx_id} />
                                               </td>
                                               <td className="text-left">
-                                                <LongHash hash={transaction.rule_id} />
+                                                {transaction.rule_id ? <LongHash hash={transaction.rule_id} /> : "-"}
                                               </td>
                                               <td className="text-left">{transaction.from}</td>
-                                              <td className="text-left">{transaction.reward_amount}</td>
                                               <td className="text-left">₹{transaction.tx_amount}</td>
+                                              <td className="text-left">{transaction.reward_amount}</td>
                                               <td className="text-left">{transaction.p_amount}</td>
                                               <td className="text-left">₹{transaction.r_amount}</td>
                                             </tr>

@@ -28,7 +28,7 @@ import {
 } from "reactstrap";
 
 import darkPoweredLogo from '../../assets/img/updated_font_svg.svg';
-import xaults from '../../assets/img/xaults_bg.png';
+import xaults from '../../assets/img/Xaults_logo_light_v.png';
 
 const AdminNavbar = (props) => {
   const [collapseOpen, setCollapseOpen] = React.useState(false);
@@ -91,7 +91,7 @@ const AdminNavbar = (props) => {
           [color]: props.location?.pathname?.indexOf("full-screen-map") === -1,
         })}
         expand="lg"
-        style={{backgroundColor:"#7152F3"}}
+        style={{backgroundColor:"#5732BF", borderBottomRightRadius: 15, borderBottomLeftRadius:15}}
       >
         <Container fluid>
           <div className="navbar-wrapper">
@@ -141,7 +141,7 @@ const AdminNavbar = (props) => {
                 <img 
                   src={xaults} 
                   alt="Logo" 
-                  style={{ position:'absolute',top:-65, left:10, width:190, cursor:'pointer'}} 
+                  style={{ position:'absolute',top:17, left:35, width:150, cursor:'pointer'}} 
                 />
               <UncontrolledDropdown nav>
                 <DropdownMenu className="dropdown-navbar" right tag="ul">
@@ -183,8 +183,8 @@ const AdminNavbar = (props) => {
                     navigate('/merchant/dashboard')
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', marginRight: '5px', backgroundColor: currLoc==='/merchant/dashboard'  ? 'white':"", borderRadius:10, paddingInline:8, paddingBlock:2 }}>
-                    <h3 style={{margin:0, padding:0, color:  currLoc==='/merchant/dashboard' ? "#7152F3": "#fff", fontSize:18, fontWeight:600, fontFamily:'Nunito', marginTop:5}}>Dashboard</h3>
+                  <div style={{ display: 'flex', alignItems: 'center', backgroundColor: currLoc==='/merchant/dashboard'  ? 'white':"", borderRadius:10, paddingInline:16 }}>
+                    <h3 style={{margin:0, padding:0, color:  currLoc==='/merchant/dashboard' ? "#5732BF": "#fff", fontSize:18, fontWeight:600, fontFamily:'Nunito', marginBlock:4}}>Dashboard</h3>
                   </div>
                 </DropdownToggle>
               </UncontrolledDropdown>
@@ -199,8 +199,8 @@ const AdminNavbar = (props) => {
                     navigate('/merchant/loyalty/create')
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center' , backgroundColor: currLoc==='/merchant/loyalty/create'  ? 'white':"", borderRadius:10, paddingInline:8, paddingBlock:2 }}>
-                    <h3 style={{margin:0, padding:0, color:  currLoc==='/merchant/loyalty/create' ? "#7152F3": "#fff", fontSize:18, fontWeight:600, fontFamily:'Nunito',  marginTop:5}}>Loyalty Program</h3>
+                  <div style={{ display: 'flex', alignItems: 'center' , backgroundColor: currLoc==='/merchant/loyalty/create'  ? 'white':"", borderRadius:10, paddingInline:16}}>
+                    <h3 style={{margin:0, padding:0, color:  currLoc==='/merchant/loyalty/create' ? "#5732BF": "#fff", fontSize:18, fontWeight:600, fontFamily:'Nunito',  marginBlock:4}}>Loyalty Program</h3>
                   </div>
                 </DropdownToggle>
               </UncontrolledDropdown>
@@ -215,23 +215,24 @@ const AdminNavbar = (props) => {
                     navigate('/merchant/transactions')
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', marginRight: '40px' , backgroundColor: currLoc==='/merchant/transactions'  ? 'white':"", borderRadius:10, paddingInline:8, paddingBlock:2 }}>
-                    <h3 style={{margin:0, padding:0, color:  currLoc==='/merchant/transactions' ? "#7152F3": "#fff", fontSize:18, fontWeight:600, fontFamily:'Nunito',  marginTop:5}}>Transactions</h3>
+                  <div style={{ display: 'flex', alignItems: 'center' , backgroundColor: currLoc==='/merchant/transactions'  ? 'white':"", borderRadius:10, paddingInline:16}}>
+                    <h3 style={{margin:0, padding:0, color:  currLoc==='/merchant/transactions' ? "#5732BF": "#fff", fontSize:18, fontWeight:600, fontFamily:'Nunito',  marginBlock:4}}>Transactions</h3>
                   </div>
                 </DropdownToggle>
               </UncontrolledDropdown>
-              <UncontrolledDropdown nav>
+              <UncontrolledDropdown nav style={{marginLeft:16}}>
                 <DropdownToggle
                   caret
                   color="default"
                   data-toggle="dropdown"
                   nav
                   onClick={(e) => e.preventDefault()}
+                  style={{marginBlock:3}}
                 >
                   <div className="photo">
                     <img alt="..." src={require("assets/img/default-avatar.png")} />
                   </div>
-                  <b className="caret d-none d-lg-block d-xl-block" />
+                  <b className="caret d-none d-lg-block d-xl-block" style={{color:"#fff"}} />
                   <p className="d-lg-none">Log out</p>
                 </DropdownToggle>
                 <DropdownMenu className="dropdown-navbar" right tag="ul">

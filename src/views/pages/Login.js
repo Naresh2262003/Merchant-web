@@ -18,6 +18,7 @@ import NotificationAlert from "react-notification-alert";
 const Login = () => {
   const [state, setState] = useState({});
   const [merchantId, setMerchantId] = useState("");
+  const [isPressed, setIsPressed] = useState(false);
 
   const notificationAlertRef = useRef(null);
   const navigate = useNavigate();
@@ -43,7 +44,8 @@ const Login = () => {
     notificationAlertRef.current.notificationAlert(options);
   };
 
-  const login = async () => {
+  const login = async (e) => {
+    e.preventDefault();
     const settings = {
       method: "GET",
       headers: {
@@ -59,15 +61,19 @@ const Login = () => {
 
       const json = await response.json();
 
+      console.log("here is the console", json.error_message);
+
       if (!response.ok) {
-        notify("tr", json.status);
+        notify("tr", json.message || json.error_message);
       } else {
         notify("tr", "Login Success", "success");
+        console.log("success", json)
         LocalStorageManager.setMerchantId(json.data.merchant_id);
-        LocalStorageManager.setAccountId(json.data.account_no ? `${json.data.account_no}@drbob` : "");
+        LocalStorageManager.setAccountId(json.data.account_no);
         LocalStorageManager.setName(json.data.name);
         LocalStorageManager.setMCC(json.data.mcc);
         LocalStorageManager.setGeo(json.data.geo_id);
+        LocalStorageManager.setWalletID(json.wallet_id)
         navigate("/merchant/dashboard");
       }
     } catch (error) {
@@ -76,27 +82,36 @@ const Login = () => {
   };
 
   return (
-    <div className="d-flex align-items-center justify-between vh-100" style={{ marginLeft: 0, paddingLeft: 0, backgroundColor: "#E2F0FF" }}>
+    <div className="d-flex align-items-center justify-between vh-100" style={{ marginLeft: 0, paddingLeft: 0,  backgroundColor:"#F8F6FE", overflow:'hidden' }}>
       <NotificationAlert ref={notificationAlertRef} />
-      <Container style={{ width: '150%', paddingLeft: 20, marginLeft: 50 }}>
+      <Container style={{ width: '150%', paddingLeft: 20, marginLeft: 60 }}>
         <Row className="align-items-center" style={{ width: '150%' }}>
-          {/* Left Side - Image & Message (70%) */}
-          <Col md="6" className="d-none d-md-block text-center" style={{ backgroundColor: "#E2F0FF", width: '700px', minHeight: '850px' }}>
-            <img
-              src={require("assets/img/1.png")}
-              alt="illustration"
-              className="img-fluid"
-              style={{ height: "400px", marginTop: '110px' }}
-            />
+          {/* <Col md="6" className="d-none d-md-block text-center" style={{ backgroundColor:"#F8F6FEBD",  width: '700px', minHeight: '850px', display:'flex', flexDirection:'column' , justifyContent:'flex-start', alignItems:"center" }}> */}
+          <Col md="6" style={{ backgroundColor:"#F8F6FE",  width: '700px', minHeight: '850px', display:'flex', flexDirection:'column' , justifyContent:'center', gap:50, alignItems:"center" }}>
+            <div>
+              <img 
+                src={require("assets/img/xaults_bg_black_v.png")}
+                alt="illustration"
+                style={{width:'200px' , marginTop:0}}
+              />
+            </div>
+            <div>
+              <img
+                src={require("assets/img/27.png")}
+                alt="illustration"
+                className="img-fluid"
+                style={{ height: "350px"}}
+              />
+            </div>
             <div>
               <h2 style={{
                 fontFamily: 'Poppins',
                 fontWeight: 600,
                 width: 600,
                 marginInline: 100,
-                marginTop: 30,
                 marginBottom: 15,
-                lineHeight: '45px'
+                lineHeight: '45px',
+                textAlign:'center'
               }}>
                 Reconnect with Your Merchant Dashboard
               </h2>
@@ -105,27 +120,27 @@ const Login = () => {
                 fontWeight: 300,
                 width:600,
                 marginInline: 100,
-                fontSize: 17
+                fontSize: 17,
+                textAlign:'center'
               }}>
                 Access your account to track transactions and manage customer rewards with ease.
               </h4>
             </div>
           </Col>
 
-          {/* Right Side - Login Form (30%) */}
           <Col md="5" style={{ marginLeft: 120, backgroundColor: "white", paddingBlock: 200 }}>
-            <img 
+            {/* <img 
               src={require("assets/img/xaults_bg_black.png")}
               alt="illustration"
               style={{ position: 'absolute', top:-40, right:10, width:'180px' }}
-            />
+            /> */}
             <div className="register-box p-4 bg-white" style={{ borderRadius: 16, marginRight: 75, marginLeft: 30 }}>
               <div style={{ marginTop: 20, marginBottom: 50, marginInline: 10, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                 <h2 className="mb-4" style={{ fontSize: 46, fontFamily: 'Poppins', fontWeight: 600 }}>Welcome back!</h2>
-                <p className="text-muted mb-4" style={{ width: '90%' , textAlign:'center'}}>
+                <p className="text-muted mb-4" style={{ width: '100%' , textAlign:'center'}}>
                   Please enter your Merchant ID to access your account.
                 </p>
-                <Form style={{ width: '90%' }}>
+                <Form style={{ width: '100%' }} onSubmit={(e)=>login(e)}>
                   <Input
                     type="text"
                     placeholder="Merchant ID"
@@ -136,11 +151,24 @@ const Login = () => {
                     onBlur={() => setState({ ...state, merchantIDFocus: false })}
                     style={{ fontSize: 16 }}
                   />
-                  <Button color="info" className="p-3" style={{ fontSize: 16 }} block onClick={login}>
+                  <button type="submit" style={{
+                    fontSize:16, backgroundColor:"#5732BF", width:"100%", border:"none", color:"white", paddingBlock: 16, borderRadius:7, fontWeight:600,
+                    transition: "all 0.1s ease",
+                    transform: isPressed ? "translateY(2px)" : "translateY(0px)",
+                    }} 
+                    
+                    onMouseDown={() => setIsPressed(true)}
+                    onMouseUp={() => setIsPressed(false)}
+                    onMouseLeave={() => setIsPressed(false)} 
+                    
+                    onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#4522a6")}
+                    onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#5732BF")}
+                    
+                  >
                     Log in
-                  </Button>
+                  </button>
                   <div className="text-center mt-4">
-                    Don't have an account? <Link to="/auth/register">Sign up</Link>
+                    Don't have an account? <Link to="/auth/register" style={{color:"#5732BF"}}>Sign up</Link>
                   </div>
                 </Form>
               </div>

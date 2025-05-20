@@ -1,28 +1,45 @@
 .kpi-row {
   .upload-info {
-    background: #F8F6FEBD;
+    background: #F8F6FE;
     padding: 15px 20px;
     // border-left: 4px solid #6f42c1;
     border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    text-align: center;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    border-width: 1px 1px 1px 1px;
+    border-style: solid;
+    // border-color: #4F46E533;
+    border-color: #5732BF33;
+
+    span {
+      display: inline-block;
+      padding-block: 12px;
+      padding-inline: 15px;
+      background-color: #7152F30D;
+      border-radius: 5px;
+    }
 
     h2 {
       margin: 0;
-      font-size: 1.2rem;
-      color: #343a40;
+      font-size: 1.2rem; 
+      font-weight: 300;
+      color:#16151C;
+      font-family: Lexend;
     }
 
     p {
-      margin-top: 5px;
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #28a745;
+      margin-top: 7px;
+      font-size:37px;
+      font-weight: 700;
+      color: #16151C;
+      margin-bottom: 0px;
+      // font-family: "Lexend", sans-serif;
+      font-family: Lexend;
+
     }
   }
 }
 .merchant-profile-box {
-  background: #Fff;
+  background: #FFF;
   padding: 20px 30px;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -57,7 +74,7 @@
       background-color: #fff;
       padding: 10px;
       border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      // box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
     .text-center {

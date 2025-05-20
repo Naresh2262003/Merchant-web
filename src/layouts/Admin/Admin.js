@@ -76,7 +76,7 @@ const Admin = (props) => {
       <div className="rna-container">
         <NotificationAlert ref={notificationAlertRef} />
       </div>
-      <div className="main-panel" ref={mainPanelRef} data={activeColor}>
+      <div className="main-panel" ref={mainPanelRef} data={activeColor} style={{borderWidth: 2, borderColor:"#5732BF", borderStyle: "solid"}}>
         <AdminNavbar
         />
         <Routes>
