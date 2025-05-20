@@ -29,6 +29,24 @@ const LocalStorageManager = {
     getName: () => {
         return localStorage.getItem("name");
     },
+    setRegistered: (registered) => {
+        localStorage.setItem("registered", registered);
+    },
+    getRegistered: () => {
+        return localStorage.getItem("registered");
+    },
+    setPhoneNo: (phoneNo) => {
+        localStorage.setItem("Phone_no", phoneNo);
+    },
+    getPhoneNo: () => {
+        return localStorage.getItem("Phone_no");
+    },
+    setWalletID: (wallet_id) => {
+        localStorage.setItem("wallet_id", wallet_id )
+    },
+    getWalletID: () => {
+        return localStorage.getItem("wallet_id");
+    }
 };
 
 export default LocalStorageManager;

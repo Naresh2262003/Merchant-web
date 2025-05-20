@@ -36,7 +36,7 @@ import LoyaltyProgramCreatePage from "./views/pages/Programs/LoyaltyProgramCreat
 // import LoyaltyProgramsList from "./views/pages/Programs/LoyaltyProgramsList.tsx";
 // import MerchantList from "./views/pages/Merchants/MerchantList";
 // import ValidationRules from "./views/pages/ValidationRules/ValidationRules";
-// import Transactions from "./views/pages/Transactions/Transactions";
+import Transactions from "./views/pages/Transactions/Transactions";
 import AdminFiles from "./views/pages/AdminFiles/AdminFiles";
 
 const routes = [
@@ -76,13 +76,13 @@ const routes = [
     path: "/dashboard",
     name: "Dashboard",
     rtlName: "لوحة القيادة",
-    icon: "tim-icons icon-single-02",
+    icon: "tim-icons icon-chart-pie-36",
     component: <AdminFiles />,
     layout: "/merchant",
   },
   {
     path: "/register",
-    name: "Data Entry",
+    name: "",
     rtlName: "لوحة القيادة",
     icon: "tim-icons icon-molecule-40",
     component: <Register />,
@@ -99,21 +99,21 @@ const routes = [
   },
   {
     path: "/login",
-    name: "Data Entry",
+    name: "",
     rtlName: "لوحة القيادة",
     icon: "tim-icons icon-molecule-40",
     component: <Login />,
     layout: "/auth",
     show: false,
   },
-  // {
-  //   path: "/dashboard",
-  //   name: "Dashboard",
-  //   rtlName: "لوحة القيادة",
-  //   icon: "tim-icons icon-chart-pie-36",
-  //   component: <Dashboard />,
-  //   layout: "/admin",
-  // },
+  {
+    path: "/transactions",
+    name: "Transactions",
+    rtlName: "لوحة القيادة",
+    icon: "tim-icons icon-bullet-list-67",
+    component: <Transactions />,
+    layout: "/merchant",
+  },
   // {
   //   collapse: true,
   //   name: "Pages",

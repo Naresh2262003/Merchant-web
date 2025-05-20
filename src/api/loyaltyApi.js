@@ -27,6 +27,10 @@ export const loyaltyApi = createApi({
                 method: 'POST',
                 body: form,
             }),
+            transformResponse: (response) => {
+                console.log("Loyalty Programs Post API Response", response);
+                return response;
+            },
         }),
         deactiveLoyaltyProgram: build.mutation({
             query: ({ merchantId }) => ({
@@ -34,6 +38,10 @@ export const loyaltyApi = createApi({
                 method: 'POST',
                 body: {"reason": "not performing well"},
             }),
+            transformResponse: (response) => {
+                console.log("Loyalty Programs Post API Response", response);
+                return response;
+            },
         }),
     })
 });
